@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import urllib2
@@ -13,6 +13,7 @@ def getUrl(url):
     req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0')
     try:
         response = urllib2.urlopen(req)
+        response_encoding = response.headers.getparam('charset')
         if not response:
             error = 'No response - Please try again'
     except urllib2.HTTPError as e:
@@ -51,10 +52,23 @@ def getBooks():
     books = []
     for entry in bookSite:
         books.append(str(entry.split(':')[1]).replace("\"",""))
+    
     return books
 
 def chapterCount(book):
     return 50
+
+def getText(uebersetzung, book, chapter):
+    link = getUrl('http://m.bibleserver.com/text/' + uebersetzung + '/' + book + str(chapter))
+    link = link[0].split('verseNumber">')
+    link.pop(0)
+    verses = []
+    for entry in link:
+        temp = entry.split('</span>')
+        temp = temp[1].split('</div>')
+        verses.append(str(temp[0]))
+    return verses
+
 
 def getAudioLink(book, chapter):
     link = getUrl('http://www.bibleserver.com/text/ABV/' + book + str(chapter))
@@ -66,6 +80,6 @@ def getAudioLink(book, chapter):
 
 #getBooks()
 #link = getAudioLink('1.Könige',7)
-
+#verse = getText('NLB','3.Mose',2)
 #i = 5
 
