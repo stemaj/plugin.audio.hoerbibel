@@ -1,4 +1,4 @@
-#!/usr/bin/python?
+ï»¿#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import os
@@ -22,7 +22,7 @@ icon = os.path.join(addonDir ,'icon.png')
 tempPath = addon.getSetting("tempPath")
 
 if (len(tempPath) == 0):
-    nameAddon = "Hörbibel"   # translation(30101) #"Hörbibel"
+    nameAddon = "HÃ¶rbibel"   # translation(30101) #"HÃ¶rbibel"
     bittePfad = "Bitte Pfad in Einstellungen festlegen" # translation(30103) #"Bitte Pfad in Einstellungen festlegen"
     xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(nameAddon, bittePfad, 4500, icon))
     sys.exit(0)
@@ -97,6 +97,7 @@ params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 buch = urllib.unquote_plus(params.get('buch', ''))
 kapitel = urllib.unquote_plus(params.get('kapitel', ''))
+
 if mode == "playAudio":
     playAudio(buch,kapitel)
     xbmc.sleep(500)

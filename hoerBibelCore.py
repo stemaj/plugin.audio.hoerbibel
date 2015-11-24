@@ -1,4 +1,4 @@
-#!/usr/bin/python
+﻿#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import urllib2
@@ -42,17 +42,13 @@ def getUrl(url):
     return (link, error)
 
 def getBooks():
-    bookSite = getUrl('http://www.bibleserver.com/overlay/selectBook')
+    bookSite = getUrl('http://www.bibleserver.com')
     if not bookSite[0]:
         return bookSite[1]
-    bookSite = bookSite[0].split("booknames\":{")
-    bookSite = bookSite[1].split("},\"trl_cols")
-    bookSite = bookSite[0]
-    bookSite = bookSite.split(',')
+    bookSite = re.compile("class=\"indexCell\">(.+?)</a>", re.DOTALL).findall(bookSite[0])
     books = []
     for entry in bookSite:
-        books.append(str(entry.split(':')[1]).replace("\"",""))
-    
+        books.append(entry)
     return books
 
 def chapterCount(book):
@@ -78,8 +74,8 @@ def getAudioLink(book, chapter):
     link = 'http://m.bibleserver.com/' + str(link)
     return link
 
-#getBooks()
-#link = getAudioLink('1.Könige',7)
+#books = getBooks()
+#link = getAudioLink(books[10],7)
 #verse = getText('NLB','3.Mose',2)
 #i = 5
 
