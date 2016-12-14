@@ -5,58 +5,26 @@ import urllib2
 import re
 import httplib
 import socket
-
-def getUrl(url):
-    error = ''
-    link = ''
-    req = urllib2.Request(url, headers={'accept': '*/*'})
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0')
-    try:
-        response = urllib2.urlopen(req)
-        response_encoding = response.headers.getparam('charset')
-        if not response:
-            error = 'No response - Please try again'
-    except urllib2.HTTPError as e:
-        error = 'Error code: ', e.code
-    except urllib2.URLError as e:
-        error = 'Reason: ', e.reason
-    except Exception as e:
-        if e.message:
-            error = e.message
-        else:
-            error = 'Other reason'
-    if not error:
-        try:
-            link = response.read()
-            if not link:
-                error = 'No data - Please try again'
-        except httplib.IncompleteRead as e:
-            error = e.message
-        except Exception as e:
-            error = e.message
-    
-    if not error:
-        if response:
-            response.close()
-
-    return (link, error)
+from stemajUrl import StemajUrl
 
 def getBooks():
-    bookSite = getUrl('http://www.bibleserver.com')
-    if not bookSite[0]:
-        return bookSite[1]
-    bookSite = re.compile("class=\"indexCell\">(.+?)</a>", re.DOTALL).findall(bookSite[0])
-    books = []
-    for entry in bookSite:
-        books.append(entry)
+    stUrl = StemajUrl()
+    bookSite = stUrl.getUrl('http://www.bibleserver.com/overlay/selectBook', True)
+    if len(stUrl.error) > 0:
+        return
+
+    bookSite = bookSite.split("pageMain\">")[1]
+    books = re.compile("\">(.+?)</a></li>", re.DOTALL).findall(bookSite)
     return books
 
 def chapterCount(book):
     return 50
 
 def getText(uebersetzung, book, chapter):
-    link = getUrl('http://m.bibleserver.com/text/' + uebersetzung + '/' + book + str(chapter))
-    link = link[0].split('verseNumber">')
+    stUrl = StemajUrl()
+    link = stUrl.getUrl('http://m.bibleserver.com/text/' + uebersetzung + '/' + book + str(chapter), True)
+    link = link.split("class=\"content\"")[1]
+    link = link.split('verseNumber">')
     link.pop(0)
     verses = []
     for entry in link:
@@ -65,13 +33,11 @@ def getText(uebersetzung, book, chapter):
         verses.append(str(temp[0]))
     return verses
 
-
 def getAudioLink(book, chapter):
-    link = getUrl('http://www.bibleserver.com/text/ABV/' + book + str(chapter))
-    link = link[0].split('file: \'')
-    link = link[1].split('config:')
-    link = link[0].split('\',')[0]
-    link = 'http://m.bibleserver.com/' + str(link)
+    stUrl = StemajUrl()
+    link = stUrl.getUrl('http://www.bibleserver.com/text/ABV/' + book + str(chapter), True)
+    link = re.compile("bible_player\"><a href=\"(.+?)\"", re.DOTALL).findall(link)[0]
+    link = 'http://www.bibleserver.com/' + link
     return link
 
 #books = getBooks()

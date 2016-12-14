@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.audio.hoerbibel" name="Hörbibel" version="0.0.3" provider-name="stemaj">
+<addon id="plugin.audio.hoerbibel" name="Hörbibel" version="0.1.1" provider-name="stemaj">
     <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-		<import addon="script.module.simple.downloader" version="1.9.5"/>
+        <import addon="xbmc.python" version="2.25.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>audio</provides>

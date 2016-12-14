@@ -8,24 +8,15 @@ import xbmc
 import xbmcgui
 import xbmcaddon
 import xbmcplugin
-import socket
 import urllib
 import hoerBibelCore
 
 addonID = 'plugin.audio.hoerbibel'
 addon = xbmcaddon.Addon(id=addonID)
-socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 translation = addon.getLocalizedString
 addonDir = xbmc.translatePath(addon.getAddonInfo('path'))
 icon = os.path.join(addonDir ,'icon.png')
-tempPath = addon.getSetting("tempPath")
-
-if (len(tempPath) == 0):
-    nameAddon = "Hörbibel"   # translation(30101) #"Hörbibel"
-    bittePfad = "Bitte Pfad in Einstellungen festlegen" # translation(30103) #"Bitte Pfad in Einstellungen festlegen"
-    xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(nameAddon, bittePfad, 4500, icon))
-    sys.exit(0)
 
 def index():
     books = hoerBibelCore.getBooks()
@@ -56,19 +47,20 @@ def addLink(kapitel, buch, mode):
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
 
 def playAudio(book,chapter):
-    import SimpleDownloader as downloader
-    downloader = downloader.SimpleDownloader()
     link = hoerBibelCore.getAudioLink(book,chapter)
-    params = { "url": link, "download_path": tempPath }
-    tempFileName = "myvideo.mp3"
-    if os.path.isfile(tempPath + tempFileName):
-        os.remove(tempPath + tempFileName)
-    downloader.download(tempFileName, params)
-    while not os.path.isfile(tempPath + tempFileName):
-        time.sleep(.100)
-    listitem = xbmcgui.ListItem(path= tempPath + tempFileName)
-    listitem.setInfo( type="Audio", infoLabels={ "Title": book } )
-    listitem.setProperty("mimetype", 'audio/mpeg')
+    params = { "url": link }
+    listitem = xbmcgui.ListItem(path=link)
+
+    text = ""
+    verse = hoerBibelCore.getText('NLB',book,chapter)
+    for i in range(0, len(verse), 1):
+        text = text + '[B]'+str(i+1)+'[/B]' + ' ' + verse[i] + '\n'
+
+    listitem.setInfo( "music", { "title": book + " " + chapter } )
+    listitem.setLabel2(text)
+
+    #showText(book,chapter)
+    #xbmc.sleep(500)
     url = xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
     return url
 
@@ -100,8 +92,6 @@ kapitel = urllib.unquote_plus(params.get('kapitel', ''))
 
 if mode == "playAudio":
     playAudio(buch,kapitel)
-    xbmc.sleep(500)
-    showText(buch,kapitel)
 elif mode == "listChapters":
     listChapters(buch)
 else:

@@ -4,3 +4,5 @@
 - textbox while listening
 0.0.3
 - umlaute fix
+0.1.1
+- changes on website, removed download
