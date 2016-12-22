@@ -47,34 +47,31 @@ def addLink(kapitel, buch, mode):
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
 
 def playAudio(book,chapter):
-    link = hoerBibelCore.getAudioLink(book,chapter)
-    params = { "url": link }
-    listitem = xbmcgui.ListItem(path=link)
 
     text = ""
     verse = hoerBibelCore.getText('NLB',book,chapter)
     for i in range(0, len(verse), 1):
         text = text + '[B]'+str(i+1)+'[/B]' + ' ' + verse[i] + '\n'
 
+    link = hoerBibelCore.getAudioLink(book,chapter)
+    params = { "url": link }
+    listitem = xbmcgui.ListItem(path=link)
+
     listitem.setInfo( "music", { "title": book + " " + chapter } )
-    listitem.setLabel2(text)
-
-    #showText(book,chapter)
-    #xbmc.sleep(500)
     url = xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-    return url
+    showText(book,chapter,text)
 
-def showText(buch,kapitel):
+def showText(buch,kapitel,text):
+    #siehe kodi.wiki/view/Window_IDs
     xbmc.executebuiltin('ActivateWindow(%d)' % 10147)
     window = xbmcgui.Window(10147)
-    xbmc.sleep( 100 )
+    xbmc.sleep(200)
+    #1 ist das label
     window.getControl(1).setLabel(buch + ' ' + kapitel)
-    text = ''
-    verse = hoerBibelCore.getText('NLB',buch,kapitel)
-    for i in range(0, len(verse), 1):
-        text = text + '[B]'+str(i+1)+'[/B]' + ' ' + verse[i] + '\n'
-    window.getControl(5).setText(text)
-    
+    #5 ist die box
+    window.getControl(5).setText("text")
+
+   
 def parameters_string_to_dict(parameters):
 	paramDict = {}
 	if parameters:

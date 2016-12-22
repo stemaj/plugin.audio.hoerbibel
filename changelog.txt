@@ -6,3 +6,5 @@
 - umlaute fix
 0.1.1
 - changes on website, removed download
+0.1.2.
+- small fix

@@ -36,12 +36,14 @@ def getText(uebersetzung, book, chapter):
 def getAudioLink(book, chapter):
     stUrl = StemajUrl()
     link = stUrl.getUrl('http://www.bibleserver.com/text/ABV/' + book + str(chapter), True)
-    link = re.compile("bible_player\"><a href=\"(.+?)\"", re.DOTALL).findall(link)[0]
-    link = 'http://www.bibleserver.com/' + link
-    return link
+    if 'bible_player' in link:
+        link = re.compile("bible_player\"><a href=\"(.+?)\"", re.DOTALL).findall(link)[0]
+        link = 'http://www.bibleserver.com/' + link
+        return link
+    return ""
 
 #books = getBooks()
-#link = getAudioLink(books[10],7)
-#verse = getText('NLB','3.Mose',2)
+#link = getAudioLink(books[67],1)
+#verse = getText('NLB','Judit',2)
 #i = 5
 
