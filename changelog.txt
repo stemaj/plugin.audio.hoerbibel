@@ -8,3 +8,5 @@
 - changes on website, removed download
 0.1.2.
 - small fix
+0.1.3
+- texts now in context menu

@@ -5,7 +5,10 @@ import urllib2
 import re
 import httplib
 import socket
+import json
 from stemajUrl import StemajUrl
+
+#json_string = '{"1.Mose": "50", "Hebräer":"13"}'
 
 def getBooks():
     stUrl = StemajUrl()
@@ -18,6 +21,11 @@ def getBooks():
     return books
 
 def chapterCount(book):
+
+    if book == "1.Mose":
+        return 50;
+    elif book == "Hebräer":
+        return 13;
     return 50
 
 def getText(uebersetzung, book, chapter):
@@ -43,6 +51,7 @@ def getAudioLink(book, chapter):
     return ""
 
 #books = getBooks()
+#x = chapterCount("Hebräer")
 #link = getAudioLink(books[67],1)
 #verse = getText('NLB','Judit',2)
 #i = 5

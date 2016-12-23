@@ -44,32 +44,38 @@ def addLink(kapitel, buch, mode):
     liz=xbmcgui.ListItem(kapitel, iconImage="DefaultAudio.png", thumbnailImage=icon)
     liz.setInfo(type="Audio", infoLabels={"Title": buch + ' ' + str(kapitel)})
     liz.setProperty('IsPlayable', 'true')
+    liz.addContextMenuItems([('Text: Luther 2017', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=LUT)'),
+                             ('Text: Luther 1984', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=LUT84)'), 
+                             ('Text: Elberfelder', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=ELF)'), 
+                             ('Text: Hoffnung für Alle', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=HFA)'), 
+                             ('Text: Schlachter 2000', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=SLT)'),
+                             ('Text: Neue Genfer Übs.', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=NGÜ)'), 
+                             ('Text: Gute Nachricht', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=GNB)'), 
+                             ('Text: Einheitsübs.', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=EU)'), 
+                             ('Text: Neues Leben', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=NLB)'),
+                             ('Text: Neue evangelistische Übs.', 'RunPlugin(plugin://'+addonID+'/?mode=showText&buch='+buch+'&kapitel='+kapitel+'&uebersetzung=NeÜ)')])
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
 
 def playAudio(book,chapter):
-
-    text = ""
-    verse = hoerBibelCore.getText('NLB',book,chapter)
-    for i in range(0, len(verse), 1):
-        text = text + '[B]'+str(i+1)+'[/B]' + ' ' + verse[i] + '\n'
-
     link = hoerBibelCore.getAudioLink(book,chapter)
     params = { "url": link }
     listitem = xbmcgui.ListItem(path=link)
-
     listitem.setInfo( "music", { "title": book + " " + chapter } )
     url = xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-    showText(book,chapter,text)
 
-def showText(buch,kapitel,text):
+def showText(buch,kapitel,uebersetzung):
     #siehe kodi.wiki/view/Window_IDs
     xbmc.executebuiltin('ActivateWindow(%d)' % 10147)
     window = xbmcgui.Window(10147)
     xbmc.sleep(200)
     #1 ist das label
     window.getControl(1).setLabel(buch + ' ' + kapitel)
+    text = ""
+    verse = hoerBibelCore.getText(uebersetzung,buch,kapitel)
+    for i in range(0, len(verse), 1):
+        text = text + '[B]'+str(i+1)+'[/B]' + ' ' + verse[i] + '\n'
     #5 ist die box
-    window.getControl(5).setText("text")
+    window.getControl(5).setText(text)
 
    
 def parameters_string_to_dict(parameters):
@@ -86,10 +92,13 @@ params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 buch = urllib.unquote_plus(params.get('buch', ''))
 kapitel = urllib.unquote_plus(params.get('kapitel', ''))
+uebersetzung = urllib.unquote_plus(params.get('uebersetzung', ''))
 
 if mode == "playAudio":
     playAudio(buch,kapitel)
 elif mode == "listChapters":
     listChapters(buch)
+elif mode == "showText":
+    showText(buch,kapitel,uebersetzung)
 else:
     index()
